@@ -3,7 +3,7 @@ import json
 
 
 class User:
-    def __init__(self, id: str, captured_at: datetime,
+    def __init__(self, user_id: str, captured_at: datetime,
                  created_at: datetime = None,
                  description: str = None,
                  entities: str = None,
@@ -22,7 +22,7 @@ class User:
                  ):
         # https://developer.twitter.com/en/docs/twitter-api/v1/data-dictionary/overview/user-object
         # https://developer.twitter.com/en/docs/twitter-api/tweets/lookup/quick-start
-        self.id = id
+        self.id = user_id
         self.captured_at = captured_at
         self.created_at = created_at
         self.description = description
@@ -41,12 +41,26 @@ class User:
         self.user_name = user_name
 
     @property
+    def user_id(self):
+        return self.id
+
+    @property
     def age(self):
         return (self.captured_at - self.created_at).days
 
+    def __repr__(self):
+        return 'User(id={}, captured_at={}, created_at={}, user_name={})'.format(self.user_id, self.captured_at,
+                                                                                 self.created_at, self.user_name)
+
     def __str__(self):
-        return 'User(id=[}, captured_at={}, created_at={}, user_name={}'.format(self.id, self.captured_at,
-                                                                                self.created_at, self.user_name)
+        return 'User(id={}, captured_at={}, created_at={}, user_name={})'.format(self.user_id, self.captured_at,
+                                                                                 self.created_at, self.user_name)
+
+    def full_str(self):
+        user_dict = vars(self)
+        user_dict['captured_at'] = self.captured_at.strftime("%m/%d/%Y, %H:%M:%S")
+        user_dict['created_at'] = self.created_at.strftime("%m/%d/%Y, %H:%M:%S")
+        return json.dumps(user_dict)
 
 
 class UserBuilder:
@@ -54,7 +68,7 @@ class UserBuilder:
 
     @classmethod
     def from_v1_json(cls, user_json: str, captured_at: str) -> User:
-        return User(id=user_json['id_str'], captured_at=cls.datetime_from_v1_string(captured_at),
+        return User(user_id=user_json['id_str'], captured_at=cls.datetime_from_v1_string(captured_at),
                     created_at=cls.datetime_from_v1_string(user_json['created_at']),
                     description=user_json['description'],
                     entities=json.dumps(user_json['entities']),

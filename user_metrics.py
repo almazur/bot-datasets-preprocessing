@@ -54,7 +54,7 @@ class UserMetrics:
 class UserMetricsBuilder:
     @classmethod
     def for_user(cls, user: User) -> UserMetrics:
-        return UserMetrics(user_id=user.id,
+        return UserMetrics(user_id=user.user_id,
                            user_age=user.age,
                            tweets_count=user.tweets_count,
                            favourites_count=user.favourites_count,
